@@ -17,6 +17,10 @@ import org.zeroturnaround.zip.ZipUtil;
 import org.apache.commons.compress.compressors.bzip2.*;
 import org.apache.commons.compress.compressors.xz.XZCompressorInputStream;
 import org.apache.commons.compress.compressors.xz.XZCompressorOutputStream;
+import org.tukaani.xz.FilterOptions;
+import org.tukaani.xz.LZMA2Options;
+import org.tukaani.xz.XZInputStream;
+import org.tukaani.xz.XZOutputStream;
 
 public class App 
 {
@@ -54,7 +58,7 @@ public class App
     	
     	// XZ Start
     	
-    	InputStream in = Files.newInputStream(Paths.get("C:\\\\Users\\\\xavhy\\\\Desktop\\\\test1.txt"));
+/*    	InputStream in = Files.newInputStream(Paths.get("C:\\\\Users\\\\xavhy\\\\Desktop\\\\test1.txt"));
     	OutputStream fout = Files.newOutputStream(Paths.get("C:\\\\Users\\\\xavhy\\\\Desktop\\\\test1.txt.xz"));
     	long startTime1 = System.currentTimeMillis();
     	BufferedOutputStream out = new BufferedOutputStream(fout);
@@ -70,7 +74,8 @@ public class App
     	long endTime1 = System.currentTimeMillis();
     	System.out.println("XZ compress time elapsed：" + (endTime1 - startTime1)
     	        + "ms");
-
+    	
+    	
     	
     	InputStream fin1 = Files.newInputStream(Paths.get("C:\\Users\\xavhy\\Desktop\\test1.txt.xz"));
     	long startTime2 = System.currentTimeMillis();
@@ -86,7 +91,7 @@ public class App
     	xzIn1.close();
     	long endTime2 = System.currentTimeMillis();
     	System.out.println("XZ decompress time elapsed：" + (endTime2 - startTime2)
-    	        + "ms");
+    	        + "ms");*/
     	
     	// XZ End
     	
@@ -95,5 +100,41 @@ public class App
 //    	ZipUtil.packEntry(new File("C:\\\\Users\\\\xavhy\\\\Desktop\\\\test.txt"), new File("C:\\\\Users\\\\xavhy\\\\Desktop\\\\test.zip"));
     	
     	//ZT Zip End
+    	
+    	InputStream in = Files.newInputStream(Paths.get("C:\\\\Users\\\\xavhy\\\\Desktop\\\\test1.txt"));
+    	OutputStream fout = Files.newOutputStream(Paths.get("C:\\\\Users\\\\xavhy\\\\Desktop\\\\test1.txt.xz"));
+    	long startTime1 = System.currentTimeMillis();
+    	BufferedOutputStream out = new BufferedOutputStream(fout);
+    	XZOutputStream xzOut = new XZOutputStream(out, new LZMA2Options());   	
+    	
+		final byte[] buffer = new byte[buffersize ];
+    	int n = 0;  
+    	while (-1 != (n = in.read(buffer))) {
+    	    xzOut.write(buffer, 0, n);
+    	}
+    	xzOut.close();
+    	in.close();
+    	long endTime1 = System.currentTimeMillis();
+    	System.out.println("XZ compress time elapsed：" + (endTime1 - startTime1)
+    	        + "ms");
+    	
+    	
+    	
+    	InputStream fin1 = Files.newInputStream(Paths.get("C:\\Users\\xavhy\\Desktop\\test1.txt.xz"));
+    	long startTime2 = System.currentTimeMillis();
+    	BufferedInputStream in1 = new BufferedInputStream(fin1);
+    	OutputStream out1 = Files.newOutputStream(Paths.get("C:\\\\Users\\\\xavhy\\\\Desktop\\\\test1uncomp.txt"));
+    	XZInputStream xzIn1 = new XZInputStream(in1);
+    	final byte[] buffer1 = new byte[buffersize];
+    	int n1 = 0;
+    	while (-1 != (n1 = xzIn1.read(buffer))) {
+    	    out1.write(buffer1, 0, n1);
+    	}
+    	out1.close();
+    	xzIn1.close();
+    	long endTime2 = System.currentTimeMillis();
+    	System.out.println("XZ decompress time elapsed：" + (endTime2 - startTime2)
+    	        + "ms");
+    	
     }
 }
